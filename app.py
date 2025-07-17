@@ -1,20 +1,30 @@
 import streamlit as st
 import random
 
-st.title("Guess the Secret Number !")
+st.set_page_config(page_title=" Guess the Number Game 🎲", page_icon="🎲")
 
-# Initialize secret number in session state
-if 'secret_number' not in st.session_state:
+# Initialize session state
+if "secret_number" not in st.session_state:
     st.session_state.secret_number = random.randint(1, 10)
+if "attempts" not in st.session_state:
+    st.session_state.attempts = 0
 
-guess = st.number_input("Guess a number between 1 and 10", min_value=1, max_value=10, step=1)
+st.title("Guess the Number Game 🎲")
 
-if st.button("Submit Guess"):
+st.write("I'm thinking of a number between 1 and 10. Can you guess it?")
+
+guess = st.number_input("Enter your guess:", min_value=1, max_value=10, step=1)
+
+if st.button("Guess"):
+    st.session_state.attempts += 1
     if guess == st.session_state.secret_number:
-        st.success("Congratulations, you guessed it!")
-        st.session_state.secret_number = random.randint(1, 10)  # Reset for next round
-    elif guess > st.session_state.secret_number:
-        st.info("Oops, your guess is too high!")
+        st.success(f"Congratulations! You guessed it in {st.session_state.attempts} tries 🎉.")
+    elif guess < st.session_state.secret_number:
+        st.warning("Oops, your guess is too low. Try again!")
     else:
-        st.info("Nope, your guess is too low!")
+        st.warning("Oops, your guess is too high. Try again!")
 
+if st.button("Reset Game"):
+    st.session_state.secret_number = random.randint(1, 10)
+    st.session_state.attempts = 0
+    st.success("Game has been reset! Guess a new number.")
